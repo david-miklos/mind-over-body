@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
@@ -12,7 +11,7 @@ const CreateSubscription = () => {
     api.subscriptions.create.useMutation({
       onSuccess: () => {
         setInput("");
-        ctx.subscriptions.getAll.invalidate();
+        void ctx.subscriptions.getAll.invalidate();
       },
       onError: (error) => {
         const defaultErrorMessage = "Something went wrong";
