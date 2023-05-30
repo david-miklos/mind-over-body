@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 
 const CreateSubscription = () => {
@@ -17,11 +18,11 @@ const CreateSubscription = () => {
       const zodErrorMessage = error.data?.zodError?.fieldErrors.content;
       const prismaErrorMessage = error.message;
       if (zodErrorMessage) {
-        console.log(zodErrorMessage.join(". "));
+        toast.error(zodErrorMessage.join(". "));
       } else if (prismaErrorMessage) {
-        console.log(prismaErrorMessage);
+        toast.error(prismaErrorMessage);
       } else {
-        console.log(defaultErrorMessage);
+        toast.error(defaultErrorMessage);
       }
     },
   });
