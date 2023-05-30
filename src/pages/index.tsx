@@ -1,11 +1,54 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 import { api } from "~/utils/api";
 
-const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+const CreateSubscription = () => {
+  const [input, setInput] = useState("");
+  const ctx = api.useContext();
+  const { mutate } = api.subscriptions.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      ctx.subscriptions.getAll.invalidate();
+    },
+    onError: (error) => {
+      const defaultErrorMessage = "Something went wrong";
+      const zodErrorMessage = error.data?.zodError?.fieldErrors.content;
+      const prismaErrorMessage = error.message;
+      if (zodErrorMessage) {
+        console.log(zodErrorMessage.join(". "));
+      } else if (prismaErrorMessage) {
+        console.log(prismaErrorMessage);
+      } else {
+        console.log(defaultErrorMessage);
+      }
+    },
+  });
 
+  return (
+    <div className="flex gap-2">
+      <input
+        className="rounded-md border-2 border-blue-500 p-2 outline-none"
+        type="text"
+        value={input}
+        placeholder="email"
+        onChange={(e) => {
+          setInput(e.target.value);
+        }}
+      />
+      <button
+        className="rounded-lg bg-blue-500 p-2 text-white"
+        onClick={() => mutate({ content: input })}
+      >
+        submit
+      </button>
+    </div>
+  );
+};
+
+const Home: NextPage = () => {
+  const { data } = api.subscriptions.getAll.useQuery();
   return (
     <>
       <Head>
@@ -13,8 +56,14 @@ const Home: NextPage = () => {
         <meta name="description" content="Mind Over Body" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="flex min-h-screen items-center justify-center">
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4">
         <section>Getting started</section>
+        <section>
+          {data?.map(({ id, email }) => (
+            <div key={id}>{email}</div>
+          ))}
+        </section>
+        <CreateSubscription />
       </main>
     </>
   );
