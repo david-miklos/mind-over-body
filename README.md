@@ -27,3 +27,11 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 3. Use the CLI to connect to the DB: `pscale auth login`
 4. Create a `dev` database branch: `pscale branch create <branch_name> dev`
 5. Start the connection: `pscale connect <database_name> dev --port 3306`
+
+### Prisma ORM
+
+1. Install Prisma Client: `npm i @prisma/client`
+2. Install Prisma as dev dependency: `npm i prisma --save-dev`
+3. Initialize Prisma: `npx prisma init`
+4. Push schema updates to database: `npx prisma db push`
+5. Generate type-safe database client: `prisma generate` or `npm install`
